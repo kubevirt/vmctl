@@ -17,6 +17,25 @@ subjects:
   name: vmctl
   namespace: default
 ---
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: have-podinfo
+spec:
+  selector:
+    matchLabels:
+      app: vmctl
+  volumeMounts:
+    - name: podinfo
+      mountPath: /etc/podinfo
+  volumes:
+    - name: podinfo
+      downwardAPI:
+        items:
+        - path: "name"
+          fieldRef:
+            fieldPath: metadata.name
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -39,15 +58,4 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
         - "testvm"
-        volumeMounts:
-        - name: podinfo
-          mountPath: /etc/podinfo
       serviceAccountName: vmctl
-      volumes:
-      - name: podinfo
-        downwardAPI:
-          items:
-          - path: "name"
-            fieldRef:
-              fieldPath: metadata.name
-
