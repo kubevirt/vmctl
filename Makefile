@@ -11,6 +11,9 @@ push:
 	echo
 endif
 
+submodules:
+	git submodule update --init --recursive
+
 build:
 	docker build -t $(TAG) .
 
